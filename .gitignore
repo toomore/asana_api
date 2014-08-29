@@ -1,0 +1,9 @@
+*.pid
+*.pyc
+*.pylint
+*.rdb
+*.swp
+.env
+build
+setting.py
+venv
