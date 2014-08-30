@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import urllib
+import requests
 from requests import Request
 from requests import Session
 from urlparse import urljoin
@@ -31,6 +32,18 @@ class AsanaApi(object):
 
         return u'https://app.asana.com/-/oauth_authorize?%s' % urllib.urlencode(params)
 
+    @staticmethod
+    def oauth_token(client_id, client_secret, redirect_uri, code):
+        data = {'client_id': client_id,
+                'client_secret': client_secret,
+                'redirect_uri': redirect_uri,
+                'code': code,
+                'grant_type': u'authorization_code'}
+        result = requests.post(u'https://app.asana.com/-/oauth_token',
+                data=data)
+
+        return result.json()
+
 if __name__ == '__main__':
     import setting
     #asana = AsanaApi(setting.API_KEY)
@@ -43,4 +56,6 @@ if __name__ == '__main__':
     #        print ele, i[ele],
     #    print
     #print len(result.json()['data'])
-    print AsanaApi.oauth_authorize('client_id', 'http')
+    #print AsanaApi.oauth_authorize('client_id', 'http')
+    print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
+            setting.OAUTHREDIRECT, u'...')
