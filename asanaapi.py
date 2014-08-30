@@ -9,11 +9,10 @@ from urlparse import urljoin
 class AsanaApi(object):
     def __init__(self, api_key):
         self.api_key = api_key
-        self.api_url = u'https://app.asana.com/api/1.0/'
         self.session = Session()
 
     def _requests(self, method, path, params=None):
-        path = urljoin(self.api_url, path)
+        path = urljoin(u'https://app.asana.com/api/1.0/', path)
         # ----- API token ----- #
         #raw_requests = Request(method, path, auth=(self.api_key, ''),
         #        params=params)
@@ -41,7 +40,8 @@ class AsanaApi(object):
         return self.get('./workspaces').json()
 
     def get_workspaces_tasks(self, workspace_id, me=True):
-        return self.get('./workspaces/%s/tasks%s' % (workspace_id, u'?&assignee=me' if me else u'')).json()
+        return self.get('./workspaces/%s/tasks%s' % (workspace_id,
+            u'?&assignee=me' if me else u'')).json()
 
     @staticmethod
     def oauth_authorize(client_id, redirect_uri, response_type='code',
@@ -52,7 +52,8 @@ class AsanaApi(object):
         if state:
             params.update({'state': state})
 
-        return u'https://app.asana.com/-/oauth_authorize?%s' % urllib.urlencode(params)
+        return u'https://app.asana.com/-/oauth_authorize?%s' % \
+                urllib.urlencode(params)
 
     @staticmethod
     def oauth_token(client_id, client_secret, redirect_uri, code):
