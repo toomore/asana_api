@@ -45,5 +45,16 @@ def projects_tasks(workspace_id):
         return u'<br>'.join(result)
     return u'Please login'
 
+@app.route('/user/tasks/all')
+def all_tasks():
+    if session.get('access_token'):
+        asanaapi = AsanaApi(session['access_token'])
+        result = []
+        tasks = asanaapi.get_all_my_tasks()
+        for task in tasks:
+            result.append(u'%s name: %s' % (task, tasks[task]))
+        return u'<br>'.join(result)
+    return u'Please login'
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

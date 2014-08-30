@@ -28,6 +28,15 @@ class AsanaApi(object):
     def get(self, *args, **kwargs):
         return self._requests('GET', *args, **kwargs)
 
+    def get_all_my_tasks(self):
+        result = {}
+        for project in self.get_workspaces()['data']:
+            data = self.get_workspaces_tasks(project['id'])
+            if 'data' in data:
+                for task in data['data']:
+                    result[task['id']] = task['name']
+        return result
+
     def get_workspaces(self):
         return self.get('./workspaces').json()
 
