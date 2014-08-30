@@ -14,8 +14,15 @@ class AsanaApi(object):
 
     def _requests(self, method, path, params=None):
         path = urljoin(self.api_url, path)
-        raw_requests = Request(method, path, auth=(self.api_key, ''),
-                params=params)
+        # ----- API token ----- #
+        #raw_requests = Request(method, path, auth=(self.api_key, ''),
+        #        params=params)
+
+        raw_requests = Request(method, path, params=params)
+
+        # ----- OAUTH token ----- #
+        raw_requests.headers['Authorization'] = 'Bearer %s' % self.api_key
+
         return self.session.send(raw_requests.prepare())
 
     def get(self, *args, **kwargs):
@@ -47,15 +54,17 @@ class AsanaApi(object):
 if __name__ == '__main__':
     import setting
     #asana = AsanaApi(setting.API_KEY)
-    #params = {'workspace': setting.WORKSPACE,
-    #          'assignee': 'me'}
-    ### http://developer.asana.com/documentation/#tasks
-    #result = asana.get('./tasks', params=params)
-    #for i in result.json()['data']:
-    #    for ele in i:
-    #        print ele, i[ele],
-    #    print
-    #print len(result.json()['data'])
+    asana = AsanaApi(u'...')
+    params = {'workspace': setting.WORKSPACE,
+              'assignee': 'me'}
+    ## http://developer.asana.com/documentation/#tasks
+    result = asana.get('./tasks', params=params)
+    for i in result.json()['data']:
+        for ele in i:
+            print ele, i[ele],
+        print
+    print len(result.json()['data'])
     #print AsanaApi.oauth_authorize('client_id', 'http')
-    print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
-            setting.OAUTHREDIRECT, u'...')
+
+    #print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
+    #        setting.OAUTHREDIRECT, u'...')
