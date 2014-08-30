@@ -5,5 +5,7 @@
 *.swp
 .env
 build
+log/*
+!log/.gitkeep
 setting.py
 venv

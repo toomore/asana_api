@@ -1,0 +1,1 @@
+git remote update; git pull origin master; sudo kill -9 $(cat ./asana_api.pid); uwsgi --ini ./uwsgi.ini --pidfile ./asana_api.pid &
