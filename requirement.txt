@@ -1,0 +1,6 @@
+flask
+pip>=1.4
+requests
+setuptools>=0.9
+uwsgi
+wheel>=0.21
