@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-import urllib
 import requests
+import time
+import urllib
+from datetime import datetime
 from requests import Request
 from requests import Session
 from urlparse import urljoin
@@ -67,20 +69,32 @@ class AsanaApi(object):
 
         return result.json()
 
+    @staticmethod
+    def date_encode(timestamp=None):
+        if not timestamp:
+            timestamp = time.time()
+        date = datetime.fromtimestamp(timestamp)
+        return date.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    @staticmethod
+    def date_decode(datestr):
+        return datetime.strptime(datestr, '%Y-%m-%dT%H:%M:%SZ')
+
 if __name__ == '__main__':
     import setting
     #asana = AsanaApi(setting.API_KEY)
-    asana = AsanaApi(u'...')
-    params = {'workspace': setting.WORKSPACE,
-              'assignee': 'me'}
-    ## http://developer.asana.com/documentation/#tasks
-    result = asana.get('./tasks', params=params)
-    for i in result.json()['data']:
-        for ele in i:
-            print ele, i[ele],
-        print
-    print len(result.json()['data'])
+    #asana = AsanaApi(u'...')
+    #params = {'workspace': setting.WORKSPACE,
+    #          'assignee': 'me'}
+    ### http://developer.asana.com/documentation/#tasks
+    #result = asana.get('./tasks', params=params)
+    #for i in result.json()['data']:
+    #    for ele in i:
+    #        print ele, i[ele],
+    #    print
+    #print len(result.json()['data'])
     #print AsanaApi.oauth_authorize('client_id', 'http')
 
     #print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
     #        setting.OAUTHREDIRECT, u'...')
+    print AsanaApi.date_decode(AsanaApi.date_encode())
