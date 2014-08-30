@@ -31,6 +31,9 @@ class AsanaApi(object):
     def get_workspaces(self):
         return self.get('./workspaces').json()
 
+    def get_workspaces_tasks(self, workspace_id, me=True):
+        return self.get('./workspaces/%s/tasks%s' % (workspace_id, u'?&assignee=me' if me else u'')).json()
+
     @staticmethod
     def oauth_authorize(client_id, redirect_uri, response_type='code',
             state=None):
