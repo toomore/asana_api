@@ -50,7 +50,7 @@ def all_tasks():
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
         result = []
-        tasks = asanaapi.get_all_my_tasks()
+        tasks = asanaapi.get_all_my_tasks(7)
         for task in tasks:
             result.append(u'%s name: %s' % (task, tasks[task]))
         return u'<br>'.join(result)
