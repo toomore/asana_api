@@ -12,6 +12,10 @@
                         <p class="list-group-item-text">{{project.id}}</p>
                     </a>
                     {% endfor %}
+                    <a class="list-group-item list-group-item-warning" href="{{url_for('all_tasks')}}">
+                        <h4 class="list-group-item-heading">Show all recently tasks.</h4>
+                        <p class="list-group-item-text">Over the past 7 days.</p>
+                    </a>
                 </div>
             </div>
         </div>
