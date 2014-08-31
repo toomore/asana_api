@@ -1,0 +1,20 @@
+{% extends "base.htm" %}
+{% block body %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">Projects List</div>
+            <div class="panel-body">
+                <div class="list-group">
+                    {% for project in data %}
+                    <a class="list-group-item" href="{{url_for('projects_tasks', workspace_id=project.id)}}">
+                        <h4 class="list-group-item-heading">{{project.name}}</h4>
+                        <p class="list-group-item-text">{{project.id}}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

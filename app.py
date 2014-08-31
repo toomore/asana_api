@@ -33,7 +33,7 @@ def token():
 def projects():
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
-        return u'%s' % asanaapi.get_workspaces()
+        return render_template('user_projects.htm', data=asanaapi.get_workspaces()['data'])
     return u'Please login'
 
 @app.route('/user/projects/<workspace_id>')
