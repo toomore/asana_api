@@ -31,17 +31,14 @@ class AsanaApi(object):
         return self._requests('GET', *args, **kwargs)
 
     def get_all_my_tasks(self, delta=None):
-        result = {}
+        result = []
         for project in self.get_workspaces()['data']:
             if delta:
                 data = self.get_workspaces_tasks(project['id'],
                         completed_since=self.date_encode(datetime.now() - timedelta(days=delta)))
             else:
                 data = self.get_workspaces_tasks(project['id'])
-            if 'data' in data:
-                for task in data['data']:
-                    #result[task['id']] = task['name']
-                    result[task['id']] = task
+            result.extend(data['data'])
         return result
 
     def get_workspaces(self):

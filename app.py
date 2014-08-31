@@ -50,11 +50,8 @@ def projects_tasks(workspace_id):
 def all_tasks():
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
-        result = []
-        tasks = asanaapi.get_all_my_tasks(7)
-        for task in tasks:
-            result.append(u'%s name: %s' % (task, tasks[task]))
-        return u'<br>'.join(result)
+        return render_template('user_projects_tasks.htm',
+                data=asanaapi.get_all_my_tasks(7))
     return u'Please login'
 
 if __name__ == '__main__':
