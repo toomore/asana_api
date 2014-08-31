@@ -11,7 +11,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for task in data %}
+                {% for task in data|sort(attribute="id", reverse=True) %}
                     <tr>
                         <td>c</td>
                         <td><a href="https://app.asana.com/0/{{workspace_id}}/{{task.id}}" target="_blank">{{task.id}}</a></td>
