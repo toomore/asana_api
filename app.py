@@ -33,17 +33,17 @@ def token():
 def projects():
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
-        return render_template('user_projects.htm', data=asanaapi.get_workspaces()['data'])
+        return render_template('user_projects.htm',
+                data=asanaapi.get_workspaces()['data'])
     return u'Please login'
 
 @app.route('/user/projects/<workspace_id>')
 def projects_tasks(workspace_id):
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
-        result = []
-        for i in asanaapi.get_workspaces_tasks(workspace_id)['data']:
-            result.append(u'%(id)s name: %(name)s' % i)
-        return u'<br>'.join(result)
+        return render_template('user_projects_tasks.htm',
+                data=asanaapi.get_workspaces_tasks(workspace_id)['data'],
+                workspace_id=workspace_id)
     return u'Please login'
 
 @app.route('/user/tasks/all')
