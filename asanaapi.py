@@ -35,7 +35,8 @@ class AsanaApi(object):
         for project in self.get_workspaces()['data']:
             if delta:
                 data = self.get_workspaces_tasks(project['id'],
-                        completed_since=self.date_encode(datetime.now() - timedelta(days=delta)))
+                        completed_since=self.date_encode(datetime.now() - timedelta(days=delta)),
+                        completed=True)
             else:
                 data = self.get_workspaces_tasks(project['id'])
             result.extend(data['data'])
@@ -44,12 +45,17 @@ class AsanaApi(object):
     def get_workspaces(self):
         return self.get('./workspaces').json()
 
-    def get_workspaces_tasks(self, workspace_id, me=True, completed_since=None):
+    def get_workspaces_tasks(self, workspace_id, me=True, completed_since=None,
+            completed=None):
         params = {}
         if me:
             params.update({'assignee': 'me'})
         if completed_since:
             params.update({'completed_since': completed_since})
+        if completed is not None:
+            params.update({'completed': completed})
+
+        params.update({'opt_fields': "name,completed"})
 
         return self.get('./workspaces/%s/tasks' % workspace_id, params=params).json()
 
