@@ -1,6 +1,7 @@
 # -*- coding:utf8 -*-
 import setting
 from asanaapi import AsanaApi
+from datetime import datetime
 from flask import Flask
 from flask import redirect
 from flask import render_template
@@ -50,8 +51,19 @@ def projects_tasks(workspace_id):
 def all_tasks():
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
+        data = asanaapi.get_all_my_tasks(7)
+        has_working = False
+        for task in data:
+            task['tags'] = [tag['name'].lower() for tag in task['tags']]
+            if 'working' in task['tags']:
+                has_working = True
+            if 'completed_at' in task and task['completed_at'] is not None:
+                task['completed_at'] = AsanaApi.date_decode(task['completed_at'])
+            elif 'completed_at' in task and task['completed_at'] is None:
+                task['completed_at'] = datetime.now()
+
         return render_template('user_projects_tasks.htm',
-                data=asanaapi.get_all_my_tasks(7))
+                data=data, has_working=has_working)
     return u'Please login'
 
 if __name__ == '__main__':

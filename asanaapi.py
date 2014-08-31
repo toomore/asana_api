@@ -55,7 +55,7 @@ class AsanaApi(object):
         if completed is not None:
             params.update({'completed': completed})
 
-        params.update({'opt_fields': "name,completed"})
+        params.update({'opt_fields': "name,completed,tags.name,completed_at"})
 
         return self.get('./workspaces/%s/tasks' % workspace_id, params=params).json()
 
@@ -89,7 +89,7 @@ class AsanaApi(object):
 
     @staticmethod
     def date_decode(datestr):
-        return datetime.strptime(datestr, '%Y-%m-%dT%H:%M:%SZ')
+        return datetime.strptime(datestr, '%Y-%m-%dT%H:%M:%S.%fZ')
 
 if __name__ == '__main__':
     import setting
