@@ -3,6 +3,7 @@ import setting
 from asanaapi import AsanaApi
 from flask import Flask
 from flask import redirect
+from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
@@ -12,7 +13,7 @@ app.secret_key = setting.SESSION_KEY
 
 @app.route('/')
 def home():
-    return u'Hello world <a href="%s">Login</a>' % AsanaApi.oauth_authorize(setting.OAUTHID, setting.OAUTHREDIRECT)
+    return render_template('home.htm', login_url=AsanaApi.oauth_authorize(setting.OAUTHID, setting.OAUTHREDIRECT))
 
 @app.route('/token')
 def token():
