@@ -18,7 +18,11 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{url_for('home')}}">Asana Lazy Report</a>
+                    {% if session.get('access_token') %}
+                        <a class="navbar-brand" href="{{url_for('projects')}}">Asana Lazy Report</a>
+                    {% else %}
+                        <a class="navbar-brand" href="{{url_for('home')}}">Asana Lazy Report</a>
+                    {% endif %}
                 </div>
                 {#
                 <!-- Collect the nav links, forms, and other content for toggling -->
