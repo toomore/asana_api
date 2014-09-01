@@ -2,6 +2,7 @@
 import setting
 from asanaapi import AsanaApi
 from datetime import datetime
+from datetime import timedelta
 from flask import Flask
 from flask import redirect
 from flask import render_template
@@ -38,35 +39,44 @@ def projects():
                 data=asanaapi.get_workspaces()['data'])
     return u'Please login'
 
-@app.route('/user/projects/<workspace_id>')
-def projects_tasks(workspace_id):
+@app.route('/user/projects/<workspace_id>', defaults={'days': 7})
+@app.route('/user/projects/<workspace_id>/<int:days>')
+def projects_tasks(workspace_id, days):
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
+        data = asanaapi.get_workspaces_tasks(workspace_id,
+                    completed_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
+                    completed=True)['data']
+        result = pretty_data(data)
         return render_template('user_projects_tasks.htm',
-                data=asanaapi.get_workspaces_tasks(workspace_id)['data'])
+                data=result['data'], has_working=result['has_working'])
     return u'Please login'
+
+def pretty_data(data):
+    has_working = False
+    for task in data:
+        task['tags'] = [tag['name'].lower() for tag in task['tags']]
+        if 'working' in task['tags']:
+            has_working = True
+
+        if 'completed_at' in task and task['completed_at'] is not None:
+            task['completed_at'] = AsanaApi.date_decode(task['completed_at'])
+        elif 'completed_at' in task and task['completed_at'] is None:
+            task['completed_at'] = datetime.now()
+
+        if 'workspace' in task:
+            task['workspace'] = task['workspace']['id']
+
+    return {'data': data, 'has_working': has_working}
 
 @app.route('/user/tasks/all')
 def all_tasks():
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
         data = asanaapi.get_all_my_tasks(7)
-        has_working = False
-        for task in data:
-            task['tags'] = [tag['name'].lower() for tag in task['tags']]
-            if 'working' in task['tags']:
-                has_working = True
-
-            if 'completed_at' in task and task['completed_at'] is not None:
-                task['completed_at'] = AsanaApi.date_decode(task['completed_at'])
-            elif 'completed_at' in task and task['completed_at'] is None:
-                task['completed_at'] = datetime.now()
-
-            if 'workspace' in task:
-                task['workspace'] = task['workspace']['id']
-
+        result = pretty_data(data)
         return render_template('user_projects_tasks.htm',
-                data=data, has_working=has_working)
+                data=result['data'], has_working=result['has_working'])
     return u'Please login'
 
 if __name__ == '__main__':
