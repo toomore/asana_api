@@ -43,8 +43,7 @@ def projects_tasks(workspace_id):
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
         return render_template('user_projects_tasks.htm',
-                data=asanaapi.get_workspaces_tasks(workspace_id)['data'],
-                workspace_id=workspace_id)
+                data=asanaapi.get_workspaces_tasks(workspace_id)['data'])
     return u'Please login'
 
 @app.route('/user/tasks/all')
@@ -57,10 +56,14 @@ def all_tasks():
             task['tags'] = [tag['name'].lower() for tag in task['tags']]
             if 'working' in task['tags']:
                 has_working = True
+
             if 'completed_at' in task and task['completed_at'] is not None:
                 task['completed_at'] = AsanaApi.date_decode(task['completed_at'])
             elif 'completed_at' in task and task['completed_at'] is None:
                 task['completed_at'] = datetime.now()
+
+            if 'workspace' in task:
+                task['workspace'] = task['workspace']['id']
 
         return render_template('user_projects_tasks.htm',
                 data=data, has_working=has_working)

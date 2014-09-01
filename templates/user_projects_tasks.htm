@@ -1,31 +1,34 @@
 {% extends "base.htm" %}
+
 {% block body %}
 <div class="row">
-    <div class="alert alert-info" role="alert">#Done(sorted by completed_at.), #Working(sorted by name), #TODO(sorted by name)</div>
+    <p class="text-warning">#Done(sorted by completed_at.), #Working(sorted by name), #TODO(sorted by name)</p>
     <div>
         <b>#Done</b>
         <ol>
             {% for task in data|sort(attribute="completed_at") %}
                 {% if task.completed %}
-                    <li><a href="https://app.asana.com/0/{{workspace_id}}/{{task.id}}" target="_blank">{{task.name}}</a></li>
+                    <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
                 {% endif %}
             {% endfor %}
         </ol>
+        <br>
         {% if has_working %}
         <b>#Working</b>
         <ol>
             {% for task in data|sort(attribute="name") %}
                 {% if not task.completed and 'working' in task.tags %}
-                    <li><a href="https://app.asana.com/0/{{workspace_id}}/{{task.id}}" target="_blank">{{task.name}}</a></li>
+                    <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
                 {% endif %}
             {% endfor %}
         </ol>
+        <br>
         {% endif %}
         <b>#TODO</b>
         <ol>
             {% for task in data|sort(attribute="name") %}
                 {% if not task.completed and 'working' not in task.tags %}
-                    <li><a href="https://app.asana.com/0/{{workspace_id}}/{{task.id}}" target="_blank">{{task.name}}</a></li>
+                    <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
                 {% endif %}
             {% endfor %}
         </ol>
