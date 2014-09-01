@@ -39,19 +39,6 @@ def projects():
                 data=asanaapi.get_workspaces()['data'])
     return u'Please login'
 
-@app.route('/user/projects/<workspace_id>', defaults={'days': 7})
-@app.route('/user/projects/<workspace_id>/<int:days>')
-def projects_tasks(workspace_id, days):
-    if session.get('access_token'):
-        asanaapi = AsanaApi(session['access_token'])
-        data = asanaapi.get_workspaces_tasks(workspace_id,
-                    completed_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
-                    completed=True)['data']
-        result = pretty_data(data)
-        return render_template('user_projects_tasks.htm',
-                data=result['data'], has_working=result['has_working'])
-    return u'Please login'
-
 def pretty_data(data):
     has_working = False
     for task in data:
@@ -69,11 +56,25 @@ def pretty_data(data):
 
     return {'data': data, 'has_working': has_working}
 
-@app.route('/user/tasks/all')
-def all_tasks():
+@app.route('/user/projects/<workspace_id>', defaults={'days': 7})
+@app.route('/user/projects/<workspace_id>/<int:days>')
+def projects_tasks(workspace_id, days):
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
-        data = asanaapi.get_all_my_tasks(7)
+        data = asanaapi.get_workspaces_tasks(workspace_id,
+                    completed_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
+                    completed=True)['data']
+        result = pretty_data(data)
+        return render_template('user_projects_tasks.htm',
+                data=result['data'], has_working=result['has_working'])
+    return u'Please login'
+
+@app.route('/user/tasks/all', defaults={'days': 7})
+@app.route('/user/tasks/all/<int:days>')
+def all_tasks(days):
+    if session.get('access_token'):
+        asanaapi = AsanaApi(session['access_token'])
+        data = asanaapi.get_all_my_tasks(days)
         result = pretty_data(data)
         return render_template('user_projects_tasks.htm',
                 data=result['data'], has_working=result['has_working'])
