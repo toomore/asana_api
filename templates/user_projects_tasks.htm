@@ -2,36 +2,82 @@
 
 {% block body %}
 <div class="row">
-    <p class="text-warning">#Done(sorted by completed_at.), #Working(sorted by name), #TODO(sorted by name)</p>
-    <div>
-        <b>#Done</b>
-        <ol>
-            {% for task in data|sort(attribute="completed_at") %}
-                {% if task.completed %}
-                    <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Weekly Report</h3>
+            </div>
+            <div class="panel-body">
+                <b>#Done</b>
+                <ol>
+                    {% for task in data|sort(attribute="completed_at") %}
+                        {% if task.completed %}
+                            <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+                <br>
+                {% if has_working %}
+                <b>#Working</b>
+                <ol>
+                    {% for task in data|sort(attribute="name") %}
+                        {% if not task.completed and 'working' in task.tags %}
+                            <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+                <br>
                 {% endif %}
-            {% endfor %}
-        </ol>
-        <br>
-        {% if has_working %}
-        <b>#Working</b>
-        <ol>
-            {% for task in data|sort(attribute="name") %}
-                {% if not task.completed and 'working' in task.tags %}
-                    <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
-                {% endif %}
-            {% endfor %}
-        </ol>
-        <br>
-        {% endif %}
-        <b>#TODO</b>
-        <ol>
-            {% for task in data|sort(attribute="name") %}
-                {% if not task.completed and 'working' not in task.tags %}
-                    <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
-                {% endif %}
-            {% endfor %}
-        </ol>
+                <b>#TODO</b>
+                <ol>
+                    {% for task in data|sort(attribute="name") %}
+                        {% if not task.completed and 'working' not in task.tags %}
+                            <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">分類說明</h3>
+            </div>
+            <div class="panel-body">
+                <dl>
+                    <dt>#Done</dt>
+                    <dd>完成的事項。在 Asana 上 assign 自己、且已打勾完成的事項。</dd>
+                </dl>
+                <dl>
+                    <dt>#Working</dt>
+                    <dd>正在處理，但尚未完成。在 Asana 上設定 tag 為 <span class="label label-primary">working</span> 就可以歸類在這分類。</dd>
+                </dl>
+                <dl>
+                    <dt>#TODO</dt>
+                    <dd>待處理事項。在 Asana 上 assign 自己但尚未完成的事項。</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">排序說明</h3>
+            </div>
+            <div class="panel-body">
+                <dl>
+                    <dt>#Done</dt>
+                    <dd>以完成的時間 <strong>近→遠</strong> 排序。</dd>
+                </dl>
+                <dl>
+                    <dt>#Working</dt>
+                    <dd>以標題排序</dd>
+                </dl>
+                <dl>
+                    <dt>#TODO</dt>
+                    <dd>以標題排序</dd>
+                </dl>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
