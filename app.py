@@ -32,6 +32,9 @@ def login_required(f):
 
 @app.route('/')
 def home():
+    if session.get('access_token'):
+        logout()
+
     return render_template('home.htm', login_url=AsanaApi.oauth_authorize(setting.OAUTHID, setting.OAUTHREDIRECT))
 
 @app.route('/token')
@@ -97,6 +100,13 @@ def all_tasks(days):
     return render_template('user_projects_tasks.htm',
             data=result['data'], has_working=result['has_working'],
             is_all=True, days=days)
+
+@app.route('/logout')
+def logout():
+    for i in ['access_token', 'refresh_token', 'email', 'id', 'name', 'expire']:
+        session.pop(i, None)
+
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
