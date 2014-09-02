@@ -75,6 +75,7 @@ def pretty_data(data):
 
 @app.route('/user/projects/<workspace_id>', defaults={'days': 7})
 @app.route('/user/projects/<workspace_id>/<int:days>')
+@login_required
 def projects_tasks(workspace_id, days):
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
@@ -88,6 +89,7 @@ def projects_tasks(workspace_id, days):
 
 @app.route('/user/tasks/all', defaults={'days': 7})
 @app.route('/user/tasks/all/<int:days>')
+@login_required
 def all_tasks(days):
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
