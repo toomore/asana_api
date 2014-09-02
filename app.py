@@ -84,7 +84,8 @@ def projects_tasks(workspace_id, days):
                 completed=True)['data']
     result = pretty_data(data)
     return render_template('user_projects_tasks.htm',
-            data=result['data'], has_working=result['has_working'])
+            data=result['data'], has_working=result['has_working'],
+            workspace_id=workspace_id, days=days)
 
 @app.route('/user/tasks/all', defaults={'days': 7})
 @app.route('/user/tasks/all/<int:days>')
@@ -94,7 +95,8 @@ def all_tasks(days):
     data = asanaapi.get_all_my_tasks(days)
     result = pretty_data(data)
     return render_template('user_projects_tasks.htm',
-            data=result['data'], has_working=result['has_working'])
+            data=result['data'], has_working=result['has_working'],
+            is_all=True, days=days)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

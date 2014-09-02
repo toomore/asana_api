@@ -2,13 +2,13 @@
 
 {% block body %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-7">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">Weekly Report</h3>
+                <h3 class="panel-title">Weekly Report（近 {{days}} 日）</h3>
             </div>
             <div class="panel-body">
-                <b>#Done</b>
+                <strong>#Done</strong>
                 <ol>
                     {% for task in data|sort(attribute="completed_at") %}
                         {% if task.completed %}
@@ -18,7 +18,7 @@
                 </ol>
                 <br>
                 {% if has_working %}
-                <b>#Working</b>
+                <strong>#Working</strong>
                 <ol>
                     {% for task in data|sort(attribute="name") %}
                         {% if not task.completed and 'working' in task.tags %}
@@ -28,7 +28,7 @@
                 </ol>
                 <br>
                 {% endif %}
-                <b>#TODO</b>
+                <strong>#TODO</strong>
                 <ol>
                     {% for task in data|sort(attribute="name") %}
                         {% if not task.completed and 'working' not in task.tags %}
@@ -39,7 +39,21 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">其他天數選擇</h3>
+            </div>
+            <div class="panel-body">
+                {% for day in [1, 2, 3, 5, 8, 13, 21, 34, 55] %}
+                    {% if is_all %}
+                        <a class="btn btn-success btn-xs" href="{{url_for('all_tasks', days=day)}}">近 {{day}} 日</a>
+                    {% else %}
+                        <a class="btn btn-success btn-xs" href="{{url_for('projects_tasks', workspace_id=workspace_id, days=day)}}">近 {{day}} 日</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3 class="panel-title">分類說明</h3>
