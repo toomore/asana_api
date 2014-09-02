@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
+from gevent import monkey
+monkey.patch_all()
+
+import gevent
 import requests
 import time
 import urllib
 from datetime import datetime
 from datetime import timedelta
+from gevent.pool import Pool
 from requests import Request
 from requests import Session
 from urlparse import urljoin
@@ -30,16 +35,42 @@ class AsanaApi(object):
     def get(self, *args, **kwargs):
         return self._requests('GET', *args, **kwargs)
 
-    def get_all_my_tasks(self, delta=None):
-        result = []
-        for project in self.get_workspaces()['data']:
+    #def get_all_my_tasks(self, delta=None):
+    #    result = []
+    #    for project in self.get_workspaces()['data']:
+    #        if delta:
+    #            data = self.get_workspaces_tasks(project['id'],
+    #                    completed_since=self.date_encode(datetime.now() - timedelta(days=delta)),
+    #                    completed=True)
+    #        else:
+    #            data = self.get_workspaces_tasks(project['id'])
+    #        result.extend(data['data'])
+    #    return result
+
+    def get_all_my_tasks(self, delta=None, pool_nums=8):
+        gevent_spawn_list = []
+        pool = Pool(pool_nums)
+
+        def gevent_get_data(api, delta, project_id):
             if delta:
-                data = self.get_workspaces_tasks(project['id'],
+                data = api.get_workspaces_tasks(project_id,
                         completed_since=self.date_encode(datetime.now() - timedelta(days=delta)),
                         completed=True)
             else:
-                data = self.get_workspaces_tasks(project['id'])
-            result.extend(data['data'])
+                data = api.get_workspaces_tasks(project['id'])
+
+            return data['data']
+
+        for project in self.get_workspaces()['data']:
+            gevent_spawn_list.append(pool.spawn(gevent_get_data, self, delta,
+                project['id']))
+
+        gevent.joinall(gevent_spawn_list)
+
+        result = []
+        for i in gevent_spawn_list:
+            result.extend(i.value)
+
         return result
 
     def get_workspaces(self):
