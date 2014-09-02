@@ -62,6 +62,7 @@ class AsanaApi(object):
     @staticmethod
     def oauth_authorize(client_id, redirect_uri, response_type='code',
             state=None):
+        ''' example: https://github.com/Asana/oauth-examples '''
         params = {'client_id': client_id,
                   'redirect_uri': redirect_uri,
                   'response_type': response_type}
@@ -72,12 +73,21 @@ class AsanaApi(object):
                 urllib.urlencode(params)
 
     @staticmethod
-    def oauth_token(client_id, client_secret, redirect_uri, code):
+    def oauth_token(client_id, client_secret, redirect_uri, code=None,
+            refresh_token=None, grant_type='authorization_code'):
+
         data = {'client_id': client_id,
                 'client_secret': client_secret,
                 'redirect_uri': redirect_uri,
-                'code': code,
-                'grant_type': u'authorization_code'}
+                'grant_type': grant_type}
+
+        if grant_type == 'authorization_code':
+            data.update({'code': code})
+        elif grant_type == 'refresh_token':
+            data.update({'refresh_token': refresh_token})
+        else:
+            raise
+
         result = requests.post(u'https://app.asana.com/-/oauth_token',
                 data=data)
 
@@ -106,6 +116,6 @@ if __name__ == '__main__':
     #print len(result.json()['data'])
     #print AsanaApi.oauth_authorize('client_id', 'http')
 
-    #print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
-    #        setting.OAUTHREDIRECT, u'...')
-    print AsanaApi.date_decode(AsanaApi.date_encode())
+    print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
+            setting.OAUTHREDIRECT, refresh_token=u'...', grant_type='refresh_token')
+    #print AsanaApi.date_decode(AsanaApi.date_encode())

@@ -5,14 +5,27 @@ from asanaapi import AsanaApi
 from datetime import datetime
 from datetime import timedelta
 from flask import Flask
+from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = setting.SESSION_KEY
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('expire') and \
+                (datetime.fromtimestamp(session['expire']) < datetime.now()):
+            flash(u'登入時效過期，請重新登入！')
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def home():
@@ -35,6 +48,7 @@ def token():
     return redirect(url_for('projects'))
 
 @app.route('/user/projects')
+@login_required
 def projects():
     if session.get('access_token'):
         asanaapi = AsanaApi(session['access_token'])
