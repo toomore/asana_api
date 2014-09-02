@@ -9,7 +9,14 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        <a class="btn btn-success btn-block" href="{{login_url}}">Login with Asana</a>
+        <div class="panel panel-success">
+            <div class="panel-heading">Lazy Weekly Report</div>
+            <div class="panel-body bg-success">
+                <div class="text-success">每週五下班前的 Weekly Report 也可以寫的很專業很快速 ...</div>
+                <br>
+                <a class="btn btn-success btn-block" href="{{login_url}}">Login with Asana</a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
