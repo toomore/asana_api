@@ -24,6 +24,9 @@ def login_required(f):
                 (datetime.fromtimestamp(session['expire']) < datetime.now()):
             flash(u'登入時效過期，請重新登入！')
             return redirect(url_for('home'))
+        elif not session.get('access_token'):
+            flash(u'請登入！')
+            return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -50,11 +53,9 @@ def token():
 @app.route('/user/projects')
 @login_required
 def projects():
-    if session.get('access_token'):
-        asanaapi = AsanaApi(session['access_token'])
-        return render_template('user_projects.htm',
-                data=asanaapi.get_workspaces()['data'])
-    return u'Please login'
+    asanaapi = AsanaApi(session['access_token'])
+    return render_template('user_projects.htm',
+            data=asanaapi.get_workspaces()['data'])
 
 def pretty_data(data):
     has_working = False
@@ -77,27 +78,23 @@ def pretty_data(data):
 @app.route('/user/projects/<workspace_id>/<int:days>')
 @login_required
 def projects_tasks(workspace_id, days):
-    if session.get('access_token'):
-        asanaapi = AsanaApi(session['access_token'])
-        data = asanaapi.get_workspaces_tasks(workspace_id,
-                    completed_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
-                    completed=True)['data']
-        result = pretty_data(data)
-        return render_template('user_projects_tasks.htm',
-                data=result['data'], has_working=result['has_working'])
-    return u'Please login'
+    asanaapi = AsanaApi(session['access_token'])
+    data = asanaapi.get_workspaces_tasks(workspace_id,
+                completed_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
+                completed=True)['data']
+    result = pretty_data(data)
+    return render_template('user_projects_tasks.htm',
+            data=result['data'], has_working=result['has_working'])
 
 @app.route('/user/tasks/all', defaults={'days': 7})
 @app.route('/user/tasks/all/<int:days>')
 @login_required
 def all_tasks(days):
-    if session.get('access_token'):
-        asanaapi = AsanaApi(session['access_token'])
-        data = asanaapi.get_all_my_tasks(days)
-        result = pretty_data(data)
-        return render_template('user_projects_tasks.htm',
-                data=result['data'], has_working=result['has_working'])
-    return u'Please login'
+    asanaapi = AsanaApi(session['access_token'])
+    data = asanaapi.get_all_my_tasks(days)
+    result = pretty_data(data)
+    return render_template('user_projects_tasks.htm',
+            data=result['data'], has_working=result['has_working'])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
