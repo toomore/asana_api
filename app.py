@@ -1,5 +1,6 @@
 # -*- coding:utf8 -*-
 import setting
+import time
 from asanaapi import AsanaApi
 from datetime import datetime
 from datetime import timedelta
@@ -24,9 +25,11 @@ def token():
             setting.OAUTHREDIRECT, code)
 
     session['access_token'] = result['access_token']
+    session['refresh_token'] = result['refresh_token']
     session['email'] = result['data']['email']
     session['id'] = result['data']['id']
     session['name'] = result['data']['name']
+    session['expire'] = int(time.mktime(datetime.now().timetuple()) + int(result['expires_in']))
 
     #return u'%s' % result
     return redirect(url_for('projects'))
