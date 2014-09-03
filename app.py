@@ -20,6 +20,10 @@ app.secret_key = setting.SESSION_KEY
 MEMCACHE = pylibmc.Client(setting.MEMSERVER, binary=True,
         behaviors={"tcp_nodelay": True, "ketama": True})
 
+@app.template_filter('get_project_name')
+def get_project_name(workspace_id):
+    return MEMCACHE.get('project_name:%s' % str(workspace_id))
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -65,6 +69,9 @@ def projects():
         asanaapi = AsanaApi(session['access_token'])
         result = asanaapi.get_workspaces()
         MEMCACHE.set('user_projects_list:%s' % session['id'], result, 60)
+
+    for project in result['data']:
+        MEMCACHE.add('project_name:%s' % str(project['id']), project['name'], 60)
 
     return render_template('user_projects.htm',
             data=result['data'])

@@ -86,7 +86,7 @@ class AsanaApi(object):
         if completed is not None:
             params.update({'completed': completed})
 
-        params.update({'opt_fields': "name,completed,tags.name,completed_at,workspace"})
+        params.update({'opt_fields': "name,completed,tags.name,completed_at,workspace.name,parent.name"})
 
         return self.get('./workspaces/%s/tasks' % workspace_id, params=params).json()
 
@@ -135,7 +135,6 @@ class AsanaApi(object):
 if __name__ == '__main__':
     import setting
     #asana = AsanaApi(setting.API_KEY)
-    #asana = AsanaApi(u'...')
     #params = {'workspace': setting.WORKSPACE,
     #          'assignee': 'me'}
     ### http://developer.asana.com/documentation/#tasks
@@ -147,6 +146,6 @@ if __name__ == '__main__':
     #print len(result.json()['data'])
     #print AsanaApi.oauth_authorize('client_id', 'http')
 
-    print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
-            setting.OAUTHREDIRECT, refresh_token=u'...', grant_type='refresh_token')
+    #print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
+    #        setting.OAUTHREDIRECT, refresh_token=u'...', grant_type='refresh_token')
     #print AsanaApi.date_decode(AsanaApi.date_encode())
