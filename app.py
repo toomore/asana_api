@@ -22,7 +22,7 @@ MEMCACHE = pylibmc.Client(setting.MEMSERVER, binary=True,
 
 @app.template_filter('get_project_name')
 def get_project_name(workspace_id):
-    return MEMCACHE.get('project_name:%s' % str(workspace_id))
+    return MEMCACHE.get('project_name:%s' % str(workspace_id)) or workspace_id
 
 def login_required(f):
     @wraps(f)
@@ -68,10 +68,10 @@ def projects():
     if not result:
         asanaapi = AsanaApi(session['access_token'])
         result = asanaapi.get_workspaces()
-        MEMCACHE.set('user_projects_list:%s' % session['id'], result, 60)
+        MEMCACHE.set('user_projects_list:%s' % session['id'], result, 86400)
 
     for project in result['data']:
-        MEMCACHE.add('project_name:%s' % str(project['id']), project['name'], 60)
+        MEMCACHE.add('project_name:%s' % str(project['id']), project['name'])
 
     return render_template('user_projects.htm',
             data=result['data'])
