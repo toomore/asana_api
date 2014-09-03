@@ -1,5 +1,7 @@
 flask
+gevent
 pip>=1.4
+pylibmc
 requests
 setuptools>=0.9
 uwsgi

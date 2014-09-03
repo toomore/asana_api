@@ -1,4 +1,5 @@
 # -*- coding:utf8 -*-
+import pylibmc
 import setting
 import time
 from asanaapi import AsanaApi
@@ -16,6 +17,8 @@ from functools import wraps
 app = Flask(__name__)
 app.secret_key = setting.SESSION_KEY
 
+MEMCACHE = pylibmc.Client(setting.MEMSERVER, binary=True,
+        behaviors={"tcp_nodelay": True, "ketama": True})
 
 def login_required(f):
     @wraps(f)
@@ -56,9 +59,15 @@ def token():
 @app.route('/user/projects')
 @login_required
 def projects():
-    asanaapi = AsanaApi(session['access_token'])
+    result = MEMCACHE.get('user_projects_list:%s' % session['id'])
+
+    if not result:
+        asanaapi = AsanaApi(session['access_token'])
+        result = asanaapi.get_workspaces()
+        MEMCACHE.set('user_projects_list:%s' % session['id'], result, 60)
+
     return render_template('user_projects.htm',
-            data=asanaapi.get_workspaces()['data'])
+            data=result['data'])
 
 def pretty_data(data):
     has_working = False
@@ -81,11 +90,16 @@ def pretty_data(data):
 @app.route('/user/projects/<workspace_id>/<int:days>')
 @login_required
 def projects_tasks(workspace_id, days):
-    asanaapi = AsanaApi(session['access_token'])
-    data = asanaapi.get_workspaces_tasks(workspace_id,
-                completed_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
-                completed=True)['data']
-    result = pretty_data(data)
+    result = MEMCACHE.get('user_projects_tasks:%s:%s:%s' % (session['id'], str(workspace_id), days))
+
+    if not result:
+        asanaapi = AsanaApi(session['access_token'])
+        data = asanaapi.get_workspaces_tasks(workspace_id,
+                    completed_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
+                    completed=True)['data']
+        result = pretty_data(data)
+        MEMCACHE.set('user_projects_tasks:%s:%s:%s' % (session['id'], str(workspace_id), days), result, 60)
+
     return render_template('user_projects_tasks.htm',
             data=result['data'], has_working=result['has_working'],
             workspace_id=workspace_id, days=days)
@@ -94,9 +108,14 @@ def projects_tasks(workspace_id, days):
 @app.route('/user/tasks/all/<int:days>')
 @login_required
 def all_tasks(days):
-    asanaapi = AsanaApi(session['access_token'])
-    data = asanaapi.get_all_my_tasks(days)
-    result = pretty_data(data)
+    result = MEMCACHE.get('user_all_tasks:%s:%s' % (session['id'], days))
+
+    if not result:
+        asanaapi = AsanaApi(session['access_token'])
+        data = asanaapi.get_all_my_tasks(days)
+        result = pretty_data(data)
+        MEMCACHE.set('user_all_tasks:%s:%s' % (session['id'], days), result, 60)
+
     return render_template('user_projects_tasks.htm',
             data=result['data'], has_working=result['has_working'],
             is_all=True, days=days)
