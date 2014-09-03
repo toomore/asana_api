@@ -1,4 +1,5 @@
 # -*- coding:utf8 -*-
+import hashlib
 import pylibmc
 import setting
 import time
@@ -97,7 +98,10 @@ def pretty_data(data):
 @app.route('/user/projects/<workspace_id>/<int:days>')
 @login_required
 def projects_tasks(workspace_id, days):
-    result = MEMCACHE.get('user_projects_tasks:%s:%s:%s' % (session['id'], str(workspace_id), days))
+    cache_key = 'user_projects_tasks:%s:%s:%s' % (session['id'], str(workspace_id), days)
+    cache_time = 60*30
+    hash_cache_key = hashlib.md5(cache_key).hexdigest()
+    result = MEMCACHE.get(cache_key)
 
     if not result:
         asanaapi = AsanaApi(session['access_token'])
@@ -105,27 +109,43 @@ def projects_tasks(workspace_id, days):
                     completed_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
                     completed=True)['data']
         result = pretty_data(data)
-        MEMCACHE.set('user_projects_tasks:%s:%s:%s' % (session['id'], str(workspace_id), days), result, 60)
+        MEMCACHE.set(cache_key, result, cache_time)
+        MEMCACHE.set(hash_cache_key,
+                (cache_key, url_for('projects_tasks', workspace_id=workspace_id, days=days)),
+                cache_time)
 
     return render_template('user_projects_tasks.htm',
             data=result['data'], has_working=result['has_working'],
-            workspace_id=workspace_id, days=days)
+            workspace_id=workspace_id, days=days, hash_cache_key=hash_cache_key)
 
 @app.route('/user/tasks/all', defaults={'days': 7})
 @app.route('/user/tasks/all/<int:days>')
 @login_required
 def all_tasks(days):
-    result = MEMCACHE.get('user_all_tasks:%s:%s' % (session['id'], days))
+    cache_key = 'user_all_tasks:%s:%s' % (session['id'], days)
+    cache_time = 60*30
+    hash_cache_key = hashlib.md5(cache_key).hexdigest()
+    result = MEMCACHE.get(cache_key)
 
     if not result:
         asanaapi = AsanaApi(session['access_token'])
         data = asanaapi.get_all_my_tasks(days)
         result = pretty_data(data)
-        MEMCACHE.set('user_all_tasks:%s:%s' % (session['id'], days), result, 60)
+        MEMCACHE.set(cache_key, result, cache_time)
+        MEMCACHE.set(hash_cache_key, (cache_key, url_for('all_tasks', days=days)), cache_time)
 
     return render_template('user_projects_tasks.htm',
             data=result['data'], has_working=result['has_working'],
-            is_all=True, days=days)
+            is_all=True, days=days, hash_cache_key=hash_cache_key)
+
+@app.route('/cache/flush/<cache_key>')
+def flush_page_cache(cache_key):
+    if cache_key and str(cache_key) in MEMCACHE:
+        result = MEMCACHE.get(str(cache_key))
+        MEMCACHE.delete(result[0])
+        return redirect(result[1])
+
+    return redirect(url_for('home'))
 
 @app.route('/logout')
 def logout():
