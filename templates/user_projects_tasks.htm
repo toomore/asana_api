@@ -6,13 +6,13 @@
 <div class="row">
     <div class="col-md-12">
         <p class="text-right">
-            <small><a href="{{url_for('flush_page_cache', cache_key=hash_cache_key)}}">資料不是最新的？重新與 Asana 同步資料</a></small>
+            <small><a href="{{url_for('flush_page_cache', cache_key=hash_cache_key)}}"><i class="fa fa-refresh"></i> 資料不是最新的？重新與 Asana 同步資料</a></small>
         </p>
     </div>
     <div class="col-md-7">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">Weekly Report（近 {{days}} 日）</h3>
+                <h3 class="panel-title"><i class="fa fa-flag"></i> Weekly Report（近 {{days}} 日）</h3>
             </div>
             <div class="panel-body">
                 <strong>#Done</strong>
@@ -49,7 +49,7 @@
     <div class="col-md-5">
         <div class="panel panel-success">
             <div class="panel-heading">
-                <h3 class="panel-title">其他天數選擇</h3>
+                <h3 class="panel-title"><i class="fa fa-filter"></i> 其他天數選擇</h3>
             </div>
             <div class="panel-body">
                 {% for day in [1, 2, 3, 5, 8, 13, 21, 34, 55] %}
@@ -63,7 +63,7 @@
         </div>
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title">分類說明</h3>
+                <h3 class="panel-title"><i class="fa fa-info-circle"></i> 分類說明</h3>
             </div>
             <div class="panel-body">
                 <dl>
@@ -72,7 +72,7 @@
                 </dl>
                 <dl>
                     <dt>#Working</dt>
-                    <dd>正在處理，但尚未完成。將 Asana 事項 <a href="https://asana.com/guide/learn/tags-email/tags-basics" target="_blank">tags</a> 設定為 <span class="label label-primary">working</span> 就可以歸類在這分類。</dd>
+                    <dd>正在處理，但尚未完成。將 Asana 事項 <a href="https://asana.com/guide/learn/tags-email/tags-basics" target="_blank"><i class="fa fa-tag"></i> tags</a> 設定為 <span class="label label-primary">working</span> 就可以歸類在這分類。</dd>
                 </dl>
                 <dl>
                     <dt>#TODO</dt>
@@ -86,7 +86,7 @@
         </div>
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title">排序說明</h3>
+                <h3 class="panel-title"><i class="fa fa-info-circle"></i> 排序說明</h3>
             </div>
             <div class="panel-body">
                 <dl>
