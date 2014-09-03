@@ -3,6 +3,7 @@
 <head>
     <title>{% block title %}Lazy Report{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="//app.asana.com/-/static/luna/browser/images/favicon.ico">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
@@ -20,9 +21,9 @@
                         <span class="icon-bar"></span>
                     </button>
                     {% if session.get('access_token') %}
-                        <a class="navbar-brand" href="{{url_for('projects')}}">Asana Lazy Report</a>
+                        <a class="navbar-brand" href="{{url_for('projects')}}"><i class="fa fa-check-square-o"></i> Asana Lazy Report</a>
                     {% else %}
-                        <a class="navbar-brand" href="{{url_for('home')}}">Asana Lazy Report</a>
+                        <a class="navbar-brand" href="{{url_for('home')}}"><i class="fa fa-check-square-o"></i> Asana Lazy Report</a>
                     {% endif %}
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
