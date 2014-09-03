@@ -99,7 +99,7 @@ def pretty_data(data):
 @login_required
 def projects_tasks(workspace_id, days):
     cache_key = 'user_projects_tasks:%s:%s:%s' % (session['id'], str(workspace_id), days)
-    cache_time = 60*30
+    cache_time = 3600
     hash_cache_key = hashlib.md5(cache_key).hexdigest()
     result = MEMCACHE.get(cache_key)
 
@@ -123,7 +123,7 @@ def projects_tasks(workspace_id, days):
 @login_required
 def all_tasks(days):
     cache_key = 'user_all_tasks:%s:%s' % (session['id'], days)
-    cache_time = 60*30
+    cache_time = 3600
     hash_cache_key = hashlib.md5(cache_key).hexdigest()
     result = MEMCACHE.get(cache_key)
 
