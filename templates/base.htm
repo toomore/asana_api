@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <style>body {padding-top: 70px;}</style>
 </head>
 <body>
     <div class="container-fluid">
-        <nav class="navbar navbar-default" role="navigation">
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
@@ -22,6 +23,7 @@
                     </button>
                     {% if session.get('access_token') %}
                         <a class="navbar-brand" href="{{url_for('projects')}}"><i class="fa fa-check-square-o"></i> Asana Lazy Report</a>
+                        <p class="navbar-text"><small>Hi {{session['name']}}~</small></p>
                     {% else %}
                         <a class="navbar-brand" href="{{url_for('home')}}"><i class="fa fa-check-square-o"></i> Asana Lazy Report</a>
                     {% endif %}
