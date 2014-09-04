@@ -47,22 +47,22 @@ class AsanaApi(object):
     #        result.extend(data['data'])
     #    return result
 
-    def get_all_my_tasks(self, delta=None, pool_nums=8):
+    def gevent_get_data(self, delta, project_id):
+        if delta:
+            data = self.get_workspaces_tasks(project_id,
+                    completed_since=self.date_encode(datetime.now() - timedelta(days=delta)),
+                    completed=True)
+        else:
+            data = self.get_workspaces_tasks(project['id'])
+
+        return data['data']
+
+    def get_all_my_tasks(self, delta=None, pool_nums=4):
         gevent_spawn_list = []
         pool = Pool(pool_nums)
 
-        def gevent_get_data(api, delta, project_id):
-            if delta:
-                data = api.get_workspaces_tasks(project_id,
-                        completed_since=self.date_encode(datetime.now() - timedelta(days=delta)),
-                        completed=True)
-            else:
-                data = api.get_workspaces_tasks(project['id'])
-
-            return data['data']
-
         for project in self.get_workspaces()['data']:
-            gevent_spawn_list.append(pool.spawn(gevent_get_data, self, delta,
+            gevent_spawn_list.append(pool.spawn(self.gevent_get_data, delta,
                 project['id']))
 
         gevent.joinall(gevent_spawn_list)
