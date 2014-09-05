@@ -29,7 +29,14 @@
                 <ol>
                     {% for task in data|sort(attribute="name") %}
                         {% if not task.completed and 'working' in task.tags %}
-                            <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                            {% if task.parent %}
+                                <li>{{task.parent.name}}</li>
+                                <ul>
+                                    <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                                </ul>
+                            {% else %}
+                                <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 </ol>
@@ -39,7 +46,17 @@
                 <ol>
                     {% for task in data|sort(attribute="name") %}
                         {% if not task.completed and 'working' not in task.tags %}
+                            {#
                             <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                            #}
+                            {% if task.parent %}
+                                <li>{{task.parent.name}}</li>
+                                <ul>
+                                    <li>{{task.name}} <small><a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                                </ul>
+                            {% else %}
+                                <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 </ol>
