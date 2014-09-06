@@ -1,0 +1,29 @@
+{% extends "base.htm" %}
+{% block title %}Cache Stats / {{session['name']}} - {{super()}}{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="panel panel-info">
+            <div class="panel-heading"><i class="fa fa-info-circle"></i> Memcache Stats</div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td>Key</td>
+                            <td>Value</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name in data[1]|sort %}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>{{data[1][name]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -160,7 +160,13 @@ def all_tasks(days):
             is_all=True, days=days, hash_cache_key=hash_cache_key,
             parent_task=result['parent_task'])
 
+@app.route('/cache_stats')
+@login_required
+def cache_stats():
+    return render_template('cache_stats.htm', data=MEMCACHE.get_stats()[0])
+
 @app.route('/cache/flush/<cache_key>')
+@login_required
 def flush_page_cache(cache_key):
     if cache_key and str(cache_key) in MEMCACHE:
         result = MEMCACHE.get(str(cache_key))
