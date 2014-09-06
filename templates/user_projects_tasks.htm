@@ -5,11 +5,14 @@
 {% block body %}
 <div class="row">
     <div class="col-md-12">
+        <div class="page-header">
+            <h1>{%if is_all %}All Projects Tasks{%else%}{{workspace_id|get_project_name}}{%endif%}</h1>
+        </div>
+    </div>
+    <div class="col-md-7">
         <p class="text-right">
             <small><a href="{{url_for('flush_page_cache', cache_key=hash_cache_key)}}"><i class="fa fa-refresh"></i> 資料不是最新的？重新與 Asana 同步資料</a></small>
         </p>
-    </div>
-    <div class="col-md-7">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title"><i class="fa fa-flag"></i> Weekly Report（近 {{days}} 日）</h3>
@@ -122,7 +125,7 @@
                 </dl>
                 <dl>
                     <dt>subtask</dt>
-                    <dd>子項目。如果事項是其他項目的子項目，在項目後面會附上 <span class="text-success bg-success">[主項目]</span> 的連結。</dd>
+                    <dd>子項目。如果事項是其他項目的子項目，上層會附上 <span class="text-success bg-success">[主項目]</span> 的連結。</dd>
                 </dl>
             </div>
         </div>
