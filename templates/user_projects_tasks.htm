@@ -20,7 +20,7 @@
                     {% for task in data|sort(attribute="completed_at") %}
                         {% if task.completed %}
                             {% if task.parent.id not in parent_task %}
-                                <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                                <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
@@ -28,7 +28,7 @@
                     {# render subtask #}
                     {% for parent_id in parent_task %}
                         {% if parent_task[parent_id]['completed'] %}
-                            <li><a class="text-success bg-success" href="https://app.asana.com/0/{{parent_task[parent_id]['workspace_id']}}/{{parent_id}}">{{parent_task[parent_id]['name']}}</a></li>
+                            <li><a class="text-success bg-success" href="https://app.asana.com/0/{{parent_task[parent_id]['workspace_id']}}/{{parent_id}}" target="_blank">{{parent_task[parent_id]['name']}}</a></li>
                             <ol>
                                 {% for subtask in parent_task[parent_id]['completed'] %}
                                     <li>{{subtask.name}} <small><a href="https://app.asana.com/0/{{subtask.workspace}}/{{subtask.id}}" target="_blank">[asana]</a></small></li>
@@ -44,7 +44,7 @@
                     {% for task in data|sort(attribute="name") %}
                         {% if not task.completed and 'working' in task.tags %}
                             {% if task.parent.id not in parent_task %}
-                                <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                                <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
@@ -52,7 +52,7 @@
                     {# render subtask #}
                     {% for parent_id in parent_task %}
                         {% if parent_task[parent_id]['working'] %}
-                            <li><a class="text-success bg-success" href="https://app.asana.com/0/{{parent_task[parent_id]['workspace_id']}}/{{parent_id}}">{{parent_task[parent_id]['name']}}</a></li>
+                            <li><a class="text-success bg-success" href="https://app.asana.com/0/{{parent_task[parent_id]['workspace_id']}}/{{parent_id}}" target="_blank">{{parent_task[parent_id]['name']}}</a></li>
                             <ol>
                                 {% for subtask in parent_task[parent_id]['working'] %}
                                     <li>{{subtask.name}} <small><a href="https://app.asana.com/0/{{subtask.workspace}}/{{subtask.id}}" target="_blank">[asana]</a></small></li>
@@ -67,11 +67,8 @@
                 <ol>
                     {% for task in data|sort(attribute="name") %}
                         {% if not task.completed and 'working' not in task.tags %}
-                            {#
-                            <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
-                            #}
                             {% if task.parent.id not in parent_task %}
-                                <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                                <li>{{task.name}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace}}/{{task.id}}" target="_blank">[asana]</a></small></li>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
@@ -79,7 +76,7 @@
                     {# render subtask #}
                     {% for parent_id in parent_task %}
                         {% if parent_task[parent_id]['not_completed'] %}
-                            <li><a class="text-success bg-success" href="https://app.asana.com/0/{{parent_task[parent_id]['workspace_id']}}/{{parent_id}}">{{parent_task[parent_id]['name']}}</a></li>
+                            <li><a class="text-success bg-success" href="https://app.asana.com/0/{{parent_task[parent_id]['workspace_id']}}/{{parent_id}}" target="_blank">{{parent_task[parent_id]['name']}}</a></li>
                             <ol>
                                 {% for subtask in parent_task[parent_id]['not_completed'] %}
                                     <li>{{subtask.name}} <small><a href="https://app.asana.com/0/{{subtask.workspace}}/{{subtask.id}}" target="_blank">[asana]</a></small></li>
