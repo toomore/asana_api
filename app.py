@@ -79,6 +79,7 @@ def projects():
 
 def pretty_data(data):
     has_working = False
+    parent_task = {}
     for task in data:
         task['tags'] = [tag['name'].lower() for tag in task['tags']]
         if 'working' in task['tags']:
@@ -92,7 +93,26 @@ def pretty_data(data):
         if 'workspace' in task:
             task['workspace'] = task['workspace']['id']
 
-    return {'data': data, 'has_working': has_working}
+        if 'parent' in task and task['parent']:
+            parent_task.setdefault(task['parent']['id'], {})
+            parent_task[task['parent']['id']].setdefault('working', [])
+            parent_task[task['parent']['id']].setdefault('completed', [])
+            parent_task[task['parent']['id']].setdefault('not_completed', [])
+
+            parent_task[task['parent']['id']]['name'] = task['parent']['name']
+            parent_task[task['parent']['id']]['workspace_id'] = task['parent']['workspace']['id']
+            parent_task[task['parent']['id']].setdefault('data', [])
+            parent_task[task['parent']['id']]['data'].append(task)
+
+            if task['completed']:
+                parent_task[task['parent']['id']]['completed'].append(task)
+            elif 'working' in task['tags']:
+                parent_task[task['parent']['id']]['working'].append(task)
+            else:
+                parent_task[task['parent']['id']]['not_completed'].append(task)
+
+    return {'data': data, 'has_working': has_working,
+            'parent_task': parent_task}
 
 @app.route('/user/projects/<workspace_id>', defaults={'days': 7})
 @app.route('/user/projects/<workspace_id>/<int:days>')
@@ -116,7 +136,8 @@ def projects_tasks(workspace_id, days):
 
     return render_template('user_projects_tasks.htm',
             data=result['data'], has_working=result['has_working'],
-            workspace_id=workspace_id, days=days, hash_cache_key=hash_cache_key)
+            workspace_id=workspace_id, days=days, hash_cache_key=hash_cache_key,
+            parent_task=result['parent_task'])
 
 @app.route('/user/tasks/all', defaults={'days': 7})
 @app.route('/user/tasks/all/<int:days>')
@@ -136,7 +157,8 @@ def all_tasks(days):
 
     return render_template('user_projects_tasks.htm',
             data=result['data'], has_working=result['has_working'],
-            is_all=True, days=days, hash_cache_key=hash_cache_key)
+            is_all=True, days=days, hash_cache_key=hash_cache_key,
+            parent_task=result['parent_task'])
 
 @app.route('/cache/flush/<cache_key>')
 def flush_page_cache(cache_key):

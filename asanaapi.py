@@ -86,7 +86,7 @@ class AsanaApi(object):
         if completed is not None:
             params.update({'completed': completed})
 
-        params.update({'opt_fields': "name,completed,tags.name,completed_at,workspace.name,parent.name"})
+        params.update({'opt_fields': "name,completed,tags.name,completed_at,workspace.name,parent.name,parent.workspace"})
 
         return self.get('./workspaces/%s/tasks' % workspace_id, params=params).json()
 
