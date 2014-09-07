@@ -1,6 +1,7 @@
 # -*- coding:utf8 -*-
 import hashlib
 import pylibmc
+import re
 import setting
 import time
 from asanaapi import AsanaApi
@@ -24,6 +25,18 @@ MEMCACHE = pylibmc.Client(setting.MEMSERVER, binary=True,
 @app.template_filter('get_project_name')
 def get_project_name(workspace_id):
     return MEMCACHE.get('project_name:%s' % str(workspace_id)) or workspace_id
+
+@app.template_filter('replace_github_pr')
+def replace_github_pr(words):
+    results = re.findall(r'\[PR:([0-9,]+)\]', words)
+    for result in results:
+        r = re.search('(PR:%s)' % result, words)
+        if r:
+            rstr = []
+            for i in result.split(','):
+                rstr.append('<a href="%s">%s</a>' % (setting.PR_DEFAULT % i, i))
+            words = words[:r.start()] + 'PR:' + ','.join(rstr) + words[r.end():]
+    return words
 
 def login_required(f):
     @wraps(f)
