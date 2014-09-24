@@ -173,6 +173,11 @@ def all_tasks(days):
             is_all=True, days=days, hash_cache_key=hash_cache_key,
             parent_task=result['parent_task'])
 
+@app.route('/userinfo')
+@login_required
+def user_info():
+    return render_template('user_info.htm')
+
 @app.route('/cache_stats')
 @login_required
 def cache_stats():

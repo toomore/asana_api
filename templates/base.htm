@@ -64,6 +64,7 @@
                     <a target="_blank" href="https://pinkoi.slack.com/messages/@toomore/"><i class="fa fa-bug"></i></a>
                     {% if session.get('access_token') %}
                         <a href="{{url_for('cache_stats')}}"><i class="fa fa-database"></i></a>
+                        <a href="{{url_for('user_info')}}"><i class="fa fa-eye"></i></a>
                     {% endif %}
                 </p>
             </div>
