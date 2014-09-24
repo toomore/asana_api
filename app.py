@@ -200,5 +200,25 @@ def logout():
 
     return redirect(url_for('home'))
 
+@app.route('/follower/w/<workspace_id>/p/<project_id>', defaults={'days': 7})
+@app.route('/follower/w/<workspace_id>/p/<project_id>/<int:days>')
+def follower_workspace_project(workspace_id, project_id, days=7):
+    asanaapi = AsanaApi(session['access_token'])
+    #data = asanaapi.get('./workspaces/%s/projects' % workspace_id)
+    #list_workspace_id = [i['id'] for i in data.json()['data']]
+
+    result_data = []
+    results = asanaapi.get_workspaces_tasks(workspace_id,
+            follower=session['id'],
+            modified_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
+            project_id=project_id)
+    if results and results.get('data'):
+        for result in results['data']:
+            if result['assignee'] and int(session['id']) != result['assignee']['id']:
+                if session['id'] in [f['id'] for f in result['followers']]:
+                    result_data.append(u'[%s] <a href="https://app.asana.com/0/%s/%s">%s</a> %s' % (result['completed'], project_id, result['id'], result['name'], result['modified_at']))
+
+    return u'%s' % u'<br>'.join(result_data)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

@@ -77,7 +77,7 @@ class AsanaApi(object):
         return self.get('./workspaces').json()
 
     def get_workspaces_tasks(self, workspace_id, assignee='me', completed_since=None,
-            completed=None, follower=None, project_id=None):
+            completed=None, follower=None, project_id=None, modified_since=None):
         params = {}
         if assignee and not follower:
             params.update({'assignee': assignee})
@@ -87,10 +87,12 @@ class AsanaApi(object):
             params.update({'project': project_id})
         if completed_since:
             params.update({'completed_since': completed_since})
+        if modified_since:
+            params.update({'modified_since': modified_since})
         if completed is not None:
             params.update({'completed': completed})
 
-        params.update({'opt_fields': "name,completed,tags.name,completed_at,workspace.name,parent.name,parent.workspace,followers,assignee.name"})
+        params.update({'opt_fields': "name,completed,tags.name,completed_at,workspace.name,parent.name,parent.workspace,followers,assignee.name, modified_at"})
 
         return self.get('./workspaces/%s/tasks' % workspace_id, params=params).json()
 
