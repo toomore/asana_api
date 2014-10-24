@@ -20,10 +20,10 @@
             <div class="panel-body">
                 <ol>
                     {% for task in data|sort(attribute="completed_at") %}
-                        {% if task.parent.id not in parent_task %}
-                        <li><i class="fa fa{% if task.completed %}-check{%endif%}-square-o"></i> {{task.name|replace_github_pr|safe}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace.id}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %}
-                                <p class="text-right"><i class="fa fa-users"></i> +{{task.followers|length}} <a href="https://app.asana.com/0/{{task.workspace.id}}/{{task.id}}" target="_blank">{{task.modified_at}}</a></small></p></li>
-                        {% endif %}
+                    <li>
+                        <i class="fa fa{% if task.completed %}-check{%endif%}-square-o"></i> <small><span class="text-success bg-success"><i class="fa fa-users"></i> +{{task.followers|length}}</span> <span class="text-warning bg-warning"><i class="fa fa-user"></i> {{task.assignee.name}}</span></small> {{task.name|replace_github_pr|safe}}<small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace.id}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a>{% endif %}</small>
+                        <a href="https://app.asana.com/0/{{task.workspace.id}}/{{task.id}}" target="_blank">[asana]</a></small>
+                    </li>
                     {% endfor %}
 
                     {# render subtask #}
