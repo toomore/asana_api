@@ -79,13 +79,14 @@ def token():
 def workspaces():
     result = MEMCACHE.get('user_workspaces_list:%s' % session['id'])
 
-    asanaapi = AsanaApi(session['access_token'])
     if not result:
+        asanaapi = AsanaApi(session['access_token'])
         result = asanaapi.get_workspaces()
         MEMCACHE.set('user_workspaces_list:%s' % session['id'], result, 86400)
 
     workspaces_projects_data = MEMCACHE.get('user_workspaces_projects:%s' % session['id'])
     if not workspaces_projects_data:
+        asanaapi = AsanaApi(session['access_token'])
         workspaces_projects_data = {}
         for workspace in result['data']:
             MEMCACHE.add('workspaces_name:%s' % str(workspace['id']), workspace['name'])
@@ -94,7 +95,7 @@ def workspaces():
             if 'data' in wp_result:
                 workspaces_projects_data[workspace['id']] = wp_result['data']
 
-        MEMCACHE.set('user_workspaces_projects:%s' % session['id'], workspaces_projects_data, 60)
+        MEMCACHE.set('user_workspaces_projects:%s' % session['id'], workspaces_projects_data, 300)
 
     return render_template('user_workspaces.htm',
             data=result['data'],
