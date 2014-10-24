@@ -211,8 +211,8 @@ def logout():
 
     return redirect(url_for('home'))
 
-@app.route('/follower/w/<workspace_id>/p/<project_id>', defaults={'days': 14})
-@app.route('/follower/w/<workspace_id>/p/<project_id>/<int:days>')
+@app.route('/follower/<workspace_id>/<project_id>', defaults={'days': 14})
+@app.route('/follower/<workspace_id>/<project_id>/<int:days>')
 @login_required
 def follower_workspace_project(workspace_id, project_id, days=14):
     asanaapi = AsanaApi(session['access_token'])

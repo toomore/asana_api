@@ -21,7 +21,8 @@
                 <ol>
                     {% for task in data|sort(attribute="completed_at") %}
                         {% if task.parent.id not in parent_task %}
-                        <li><i class="fa fa{% if task.completed %}-check{%endif%}-square-o"></i> {{task.name|replace_github_pr|safe}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace.id}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %} <i class="fa fa-users"></i> +{{task.followers|length}} <a href="https://app.asana.com/0/{{task.workspace.id}}/{{task.id}}" target="_blank">{{task.modified_at}}</a></small></li>
+                        <li><i class="fa fa{% if task.completed %}-check{%endif%}-square-o"></i> {{task.name|replace_github_pr|safe}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace.id}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %}
+                                <p class="text-right"><i class="fa fa-users"></i> +{{task.followers|length}} <a href="https://app.asana.com/0/{{task.workspace.id}}/{{task.id}}" target="_blank">{{task.modified_at}}</a></small></p></li>
                         {% endif %}
                     {% endfor %}
 
