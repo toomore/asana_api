@@ -79,16 +79,26 @@ def token():
 def workspaces():
     result = MEMCACHE.get('user_workspaces_list:%s' % session['id'])
 
+    asanaapi = AsanaApi(session['access_token'])
     if not result:
-        asanaapi = AsanaApi(session['access_token'])
         result = asanaapi.get_workspaces()
         MEMCACHE.set('user_workspaces_list:%s' % session['id'], result, 86400)
 
-    for project in result['data']:
-        MEMCACHE.add('workspaces_name:%s' % str(project['id']), project['name'])
+    workspaces_projects_data = MEMCACHE.get('user_workspaces_projects:%s' % session['id'])
+    if not workspaces_projects_data:
+        workspaces_projects_data = {}
+        for workspace in result['data']:
+            MEMCACHE.add('workspaces_name:%s' % str(workspace['id']), workspace['name'])
+            wp_result = asanaapi.get_workspaces_projects(workspace['id'])
+
+            if 'data' in wp_result:
+                workspaces_projects_data[workspace['id']] = wp_result['data']
+
+        MEMCACHE.set('user_workspaces_projects:%s' % session['id'], workspaces_projects_data, 60)
 
     return render_template('user_workspaces.htm',
-            data=result['data'])
+            data=result['data'],
+            workspaces_projects_data=workspaces_projects_data)
 
 def pretty_data(data):
     has_working = False
