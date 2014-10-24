@@ -72,22 +72,22 @@ def token():
     session['expire'] = int(time.mktime(datetime.now().timetuple()) + int(result['expires_in']))
 
     #return u'%s' % result
-    return redirect(url_for('projects'))
+    return redirect(url_for('workspaces'))
 
-@app.route('/user/projects')
+@app.route('/user/workspaces')
 @login_required
-def projects():
-    result = MEMCACHE.get('user_projects_list:%s' % session['id'])
+def workspaces():
+    result = MEMCACHE.get('user_workspaces_list:%s' % session['id'])
 
     if not result:
         asanaapi = AsanaApi(session['access_token'])
         result = asanaapi.get_workspaces()
-        MEMCACHE.set('user_projects_list:%s' % session['id'], result, 86400)
+        MEMCACHE.set('user_workspaces_list:%s' % session['id'], result, 86400)
 
     for project in result['data']:
-        MEMCACHE.add('project_name:%s' % str(project['id']), project['name'])
+        MEMCACHE.add('workspaces_name:%s' % str(project['id']), project['name'])
 
-    return render_template('user_projects.htm',
+    return render_template('user_workspaces.htm',
             data=result['data'])
 
 def pretty_data(data):

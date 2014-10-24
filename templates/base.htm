@@ -24,7 +24,7 @@
                         <span class="icon-bar"></span>
                     </button>
                     {% if session.get('access_token') %}
-                        <a class="navbar-brand" href="{{url_for('projects')}}"><i class="fa fa-check-square-o"></i> Asana Lazy Report</a>
+                        <a class="navbar-brand" href="{{url_for('workspaces')}}"><i class="fa fa-check-square-o"></i> Asana Lazy Report</a>
                         <p class="navbar-text"><small>Hi {{session['name']}}~</small></p>
                     {% else %}
                         <a class="navbar-brand" href="{{url_for('home')}}"><i class="fa fa-check-square-o"></i> Asana Lazy Report</a>
