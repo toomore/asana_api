@@ -96,6 +96,9 @@ class AsanaApi(object):
 
         return self.get('./workspaces/%s/tasks' % workspace_id, params=params).json()
 
+    def get_workspaces_projects(self, workspace_id):
+        return self.get('./workspaces/%s/projects' % workspace_id).json()
+
     @staticmethod
     def oauth_authorize(client_id, redirect_uri, response_type='code',
             state=None):
@@ -155,3 +158,4 @@ if __name__ == '__main__':
     #print AsanaApi.oauth_token(setting.OAUTHID, setting.OAUTHSECRET,
     #        setting.OAUTHREDIRECT, refresh_token=u'...', grant_type='refresh_token')
     #print AsanaApi.date_decode(AsanaApi.date_encode())
+    pass
