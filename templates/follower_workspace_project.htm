@@ -1,0 +1,112 @@
+{% extends "base.htm" %}
+
+{% block title %}{{workspace_id|get_project_name}} / {{session['name']}} - {{super()}}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <h1>{{workspace_id|get_project_name}}</h1>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <p class="text-right">
+            {#
+            <small><a href="{{url_for('flush_page_cache', cache_key=hash_cache_key)}}"><i class="fa fa-refresh"></i> 資料不是最新的？重新與 Asana 同步資料</a></small>
+            #}
+        </p>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-flag"></i> Weekly Report（近 {{days}} 日）</h3>
+            </div>
+            <div class="panel-body">
+                <ol>
+                    {% for task in data|sort(attribute="completed_at") %}
+                        {% if task.parent.id not in parent_task %}
+                        <li><i class="fa fa{% if task.completed%}-check{%endif%}-square-o"></i> {{task.name|replace_github_pr|safe}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace.id}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace.id}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {# render subtask #}
+                    {#
+                    {% for parent_id in parent_task %}
+                        {% if parent_task[parent_id]['completed'] %}
+                            <li><a class="text-success bg-success" href="https://app.asana.com/0/{{parent_task[parent_id]['workspace_id']}}/{{parent_id}}" target="_blank">{{parent_task[parent_id]['name']|replace_github_pr|safe}}</a></li>
+                            <ol>
+                                {% for subtask in parent_task[parent_id]['completed'] %}
+                                    <li>{{subtask.name|replace_github_pr|safe}} <small><a href="https://app.asana.com/0/{{subtask.workspace}}/{{subtask.id}}" target="_blank">[asana]</a></small></li>
+                                {% endfor %}
+                            </ol>
+                        {% endif %}
+                    {% endfor %}
+                    #}
+                </ol>
+            </div>
+        </div>
+    </div>
+    {#
+    <div class="col-md-5">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-filter"></i> 其他天數選擇</h3>
+            </div>
+            <div class="panel-body">
+                {% for day in [1, 2, 3, 5, 8, 13, 21, 34, 55] %}
+                    {% if is_all %}
+                        <a class="btn btn-success btn-xs" href="{{url_for('all_tasks', days=day)}}">近 {{day}} 日</a>
+                    {% else %}
+                        <a class="btn btn-success btn-xs" href="{{url_for('projects_tasks', workspace_id=workspace_id, days=day)}}">近 {{day}} 日</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-info-circle"></i> 分類說明</h3>
+            </div>
+            <div class="panel-body">
+                <dl>
+                    <dt>#Done</dt>
+                    <dd>完成的事項。在 Asana 上 assign 自己、且已打勾完成的事項。</dd>
+                </dl>
+                <dl>
+                    <dt>#Working</dt>
+                    <dd>正在處理，但尚未完成。將 Asana 事項 <a href="https://asana.com/guide/learn/tags-email/tags-basics" target="_blank"><i class="fa fa-tag"></i> tags</a> 設定為 <span class="label label-primary">working</span> 就可以歸類在這分類。</dd>
+                </dl>
+                <dl>
+                    <dt>#TODO</dt>
+                    <dd>待處理事項。在 Asana 上 assign 自己但尚未完成的事項。</dd>
+                </dl>
+                <dl>
+                    <dt>subtask</dt>
+                    <dd>子項目。如果事項是其他項目的子項目，上層會附上 <span class="text-success bg-success">[主項目]</span> 的連結。</dd>
+                </dl>
+                <dl>
+                    <dt>[PR:num] Github Pull Requests link</dt>
+                    <dd>Github pull requests 連結。可接受的格式 <strong>[PR:300]</strong>、<strong>[PR:315,316]</strong></dd>
+                </dl>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-info-circle"></i> 排序說明</h3>
+            </div>
+            <div class="panel-body">
+                <dl>
+                    <dt>#Done</dt>
+                    <dd>以完成的時間 <strong>近→遠</strong> 排序。</dd>
+                </dl>
+                <dl>
+                    <dt>#Working</dt>
+                    <dd>以標題排序</dd>
+                </dl>
+                <dl>
+                    <dt>#TODO</dt>
+                    <dd>以標題排序</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    #}
+</div>
+{% endblock %}
