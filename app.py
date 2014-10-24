@@ -224,17 +224,20 @@ def follower_workspace_project(workspace_id, project_id, days=7):
             modified_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
             project_id=project_id)
 
+    project_name = u''
     if results and results.get('data'):
         for result in results['data']:
             if result['assignee'] and int(session['id']) != result['assignee']['id']:
                 if session['id'] in [f['id'] for f in result['followers']]:
                     #result_data.append(u'[%s] <a href="https://app.asana.com/0/%s/%s">%s</a> %s' % (result['completed'], project_id, result['id'], result['name'], result['modified_at']))
                     result_data.append(result)
+                    project_name = result['projects'][0]['name']
 
     #return u'%s' % u'<br>'.join(result_data)
     return render_template('follower_workspace_project.htm',
             data=result_data,
             workspace_id=workspace_id,
+            project_name=project_name,
             days=days)
 
 if __name__ == '__main__':

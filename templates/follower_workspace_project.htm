@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="page-header">
-            <h1>{{workspace_id|get_project_name}}</h1>
+            <h1>{{project_name}}</h1>
         </div>
     </div>
     <div class="col-md-7">
@@ -15,15 +15,15 @@
             <small><a href="{{url_for('flush_page_cache', cache_key=hash_cache_key)}}"><i class="fa fa-refresh"></i> 資料不是最新的？重新與 Asana 同步資料</a></small>
             #}
         </p>
-        <div class="panel panel-primary">
+        <div class="panel panel-success">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-flag"></i> Weekly Report（近 {{days}} 日）</h3>
+                <h3 class="panel-title"><i class="fa fa-flag"></i> Tasks Followed By Me（近 {{days}} 日）</h3>
             </div>
             <div class="panel-body">
                 <ol>
                     {% for task in data|sort(attribute="completed_at") %}
                         {% if task.parent.id not in parent_task %}
-                        <li><i class="fa fa{% if task.completed%}-check{%endif%}-square-o"></i> {{task.name|replace_github_pr|safe}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace.id}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %}<a href="https://app.asana.com/0/{{task.workspace.id}}/{{task.id}}" target="_blank">[asana]</a></small></li>
+                        <li><i class="fa fa{% if task.completed %}-check{%endif%}-square-o"></i> {{task.name|replace_github_pr|safe}} <small>{% if task.parent %}<a class="text-success bg-success" href="https://app.asana.com/0/{{task.workspace.id}}/{{task.parent.id}}" target="_blank">[{{task.parent.name}}]</a> {% endif %} <i class="fa fa-users"></i> +{{task.followers|length}} <a href="https://app.asana.com/0/{{task.workspace.id}}/{{task.id}}" target="_blank">{{task.modified_at}}</a></small></li>
                         {% endif %}
                     {% endfor %}
 
