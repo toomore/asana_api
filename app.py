@@ -95,7 +95,7 @@ def workspaces():
             if 'data' in wp_result:
                 workspaces_projects_data[workspace['id']] = wp_result['data']
 
-        MEMCACHE.set('user_workspaces_projects:%s' % session['id'], workspaces_projects_data, 300)
+        MEMCACHE.set('user_workspaces_projects:%s' % session['id'], workspaces_projects_data, 86400)
 
     return render_template('user_workspaces.htm',
             data=result['data'],
@@ -211,34 +211,46 @@ def logout():
 
     return redirect(url_for('home'))
 
-@app.route('/follower/w/<workspace_id>/p/<project_id>', defaults={'days': 7})
+@app.route('/follower/w/<workspace_id>/p/<project_id>', defaults={'days': 14})
 @app.route('/follower/w/<workspace_id>/p/<project_id>/<int:days>')
-def follower_workspace_project(workspace_id, project_id, days=7):
+@login_required
+def follower_workspace_project(workspace_id, project_id, days=14):
     asanaapi = AsanaApi(session['access_token'])
     #data = asanaapi.get('./workspaces/%s/projects' % workspace_id)
     #list_workspace_id = [i['id'] for i in data.json()['data']]
 
-    result_data = []
-    results = asanaapi.get_workspaces_tasks(workspace_id,
-            follower=session['id'],
-            modified_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
-            project_id=project_id)
+    cache_key_org = 'follower_workspace_project_tasks:%s:%s:%s:%s' % (session['id'], days, workspace_id, project_id)
+    cache_key = hashlib.md5(cache_key_org).hexdigest()
+    cache_time = 3600
+    hash_cache_key = hashlib.md5(cache_key).hexdigest()
+    results = MEMCACHE.get(cache_key)
 
+    if not results:
+        results = asanaapi.get_workspaces_tasks(workspace_id,
+                follower=session['id'],
+                modified_since=AsanaApi.date_encode(datetime.now() - timedelta(days=days)),
+                project_id=project_id)
+
+        MEMCACHE.set(cache_key, results, cache_time)
+        MEMCACHE.set(hash_cache_key,
+                (cache_key, url_for('follower_workspace_project', days=days, workspace_id=workspace_id, project_id=project_id)),
+                cache_time)
+
+    result_data = []
     project_name = u''
     if results and results.get('data'):
         for result in results['data']:
             if result['assignee'] and int(session['id']) != result['assignee']['id']:
                 if session['id'] in [f['id'] for f in result['followers']]:
-                    #result_data.append(u'[%s] <a href="https://app.asana.com/0/%s/%s">%s</a> %s' % (result['completed'], project_id, result['id'], result['name'], result['modified_at']))
                     result_data.append(result)
                     project_name = result['projects'][0]['name']
 
-    #return u'%s' % u'<br>'.join(result_data)
     return render_template('follower_workspace_project.htm',
             data=result_data,
             workspace_id=workspace_id,
             project_name=project_name,
-            days=days)
+            days=days,
+            hash_cache_key=hash_cache_key)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

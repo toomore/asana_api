@@ -1,6 +1,6 @@
 {% extends "base.htm" %}
 
-{% block title %}{{workspace_id|get_project_name}} / {{session['name']}} - {{super()}}{% endblock %}
+{% block title %}{{project_name}} / {{session['name']}} - {{super()}}{% endblock %}
 
 {% block body %}
 <div class="row">
@@ -11,9 +11,7 @@
     </div>
     <div class="col-md-7">
         <p class="text-right">
-            {#
             <small><a href="{{url_for('flush_page_cache', cache_key=hash_cache_key)}}"><i class="fa fa-refresh"></i> 資料不是最新的？重新與 Asana 同步資料</a></small>
-            #}
         </p>
         <div class="panel panel-success">
             <div class="panel-heading">
