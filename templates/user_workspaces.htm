@@ -20,6 +20,23 @@
                 </div>
             </div>
         </div>
+        <div class="panel panel-success">
+            <div class="panel-heading"><i class="fa fa-info-circle"></i> All Projects List</div>
+            <div class="panel-body">
+                <div class="list-group">
+                    {% for workspace in data %}
+                        {% if workspaces_projects_data.get(workspace.id) %}
+                            {% for project in workspaces_projects_data[workspace.id] %}
+                                <a class="list-group-item" href="{{url_for('follower_workspace_project', workspace_id=workspace.id, project_id=project.id)}}">
+                                <h4 class="list-group-item-heading"><i class="fa fa-recycle"></i> {{project.name}}</h4>
+                                <p class="list-group-item-text text-right">{{workspace.name}}</p>
+                            </a>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
