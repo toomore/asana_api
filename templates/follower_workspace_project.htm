@@ -42,7 +42,6 @@
             </div>
         </div>
     </div>
-    {#
     <div class="col-md-5">
         <div class="panel panel-success">
             <div class="panel-heading">
@@ -50,14 +49,11 @@
             </div>
             <div class="panel-body">
                 {% for day in [1, 2, 3, 5, 8, 13, 21, 34, 55] %}
-                    {% if is_all %}
-                        <a class="btn btn-success btn-xs" href="{{url_for('all_tasks', days=day)}}">近 {{day}} 日</a>
-                    {% else %}
-                        <a class="btn btn-success btn-xs" href="{{url_for('projects_tasks', workspace_id=workspace_id, days=day)}}">近 {{day}} 日</a>
-                    {% endif %}
+                    <a class="btn btn-success btn-xs" href="{{url_for('follower_workspace_project', workspace_id=workspace_id, days=day, project_id=project_id)}}">近 {{day}} 日</a>
                 {% endfor %}
             </div>
         </div>
+        {#
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3 class="panel-title"><i class="fa fa-info-circle"></i> 分類說明</h3>
@@ -104,7 +100,7 @@
                 </dl>
             </div>
         </div>
+        #}
     </div>
-    #}
 </div>
 {% endblock %}

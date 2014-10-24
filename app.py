@@ -248,6 +248,7 @@ def follower_workspace_project(workspace_id, project_id, days=14):
     return render_template('follower_workspace_project.htm',
             data=result_data,
             workspace_id=workspace_id,
+            project_id=project_id,
             project_name=project_name,
             days=days,
             hash_cache_key=hash_cache_key)
