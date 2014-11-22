@@ -24,7 +24,7 @@ MEMCACHE = pylibmc.Client(setting.MEMSERVER, binary=True,
 
 @app.template_filter('get_project_name')
 def get_project_name(workspace_id):
-    return MEMCACHE.get('project_name:%s' % str(workspace_id)) or workspace_id
+    return MEMCACHE.get('workspaces_name:%s' % str(workspace_id)) or workspace_id
 
 @app.template_filter('replace_github_pr')
 def replace_github_pr(words):
