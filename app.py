@@ -53,10 +53,16 @@ def login_required(f):
 
 @app.route('/')
 def home():
-    if session.get('access_token'):
-        logout()
+    if session.get('expire') and \
+            (datetime.fromtimestamp(session['expire']) > datetime.now()):
+        login_url = url_for('workspaces')
+    else:
+        for i in ['access_token', 'refresh_token', 'email', 'id', 'name', 'expire']:
+            session.pop(i, None)
 
-    return render_template('home.htm', login_url=AsanaApi.oauth_authorize(setting.OAUTHID, setting.OAUTHREDIRECT))
+        login_url = AsanaApi.oauth_authorize(setting.OAUTHID, setting.OAUTHREDIRECT)
+
+    return render_template('home.htm', login_url=login_url)
 
 @app.route('/token')
 def token():
