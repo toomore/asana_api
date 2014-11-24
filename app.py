@@ -192,7 +192,7 @@ def user_info():
 @app.route('/cache_stats')
 @login_required
 def cache_stats():
-    return render_template('cache_stats.htm', data=MEMCACHE.get_stats()[0])
+    return render_template('cache_stats.htm', data=MEMCACHE.get_stats())
 
 @app.route('/cache/flush/<cache_key>')
 @login_required

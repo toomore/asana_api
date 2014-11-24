@@ -3,8 +3,9 @@
 {% block body %}
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
+        {% for mem in data %}
         <div class="panel panel-info">
-            <div class="panel-heading"><i class="fa fa-info-circle"></i> Memcache Stats</div>
+            <div class="panel-heading"><i class="fa fa-info-circle"></i> Memcache Stats {{mem[0]}}</div>
             <div class="panel-body">
                 <table class="table table-striped">
                     <thead>
@@ -14,16 +15,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for name in data[1]|sort %}
+                        {% for name in mem[1]|sort %}
                         <tr>
                             <td>{{name}}</td>
-                            <td>{{data[1][name]}}</td>
+                            <td>{{mem[1][name]}}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
